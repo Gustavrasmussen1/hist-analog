@@ -12,7 +12,10 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 def similarity_test(target,test,criteria = 0.3):
     # simple measure = 1 - Pearson correlation
-    measure = 1 - np.corrcoef(target,test)[0][1]
+    
+    # Simple improvement here would be to run correlation on relative changes rather than levels
+    # i.e. run correlation on log(prices)
+    measure = 1 - np.corrcoef(np.log(target),np.log(test))[0][1]
     
     if measure < criteria:
         return (True, measure)
@@ -86,7 +89,7 @@ with PdfPages('./HistAnalogsCharts.pdf') as export_pdf:
         ax2.plot(np.flip(fits[w[0]]), label ="Historic fit (RHS)", color="red")
         plt.grid(True)
         plt.legend(loc = "upper left")
-        plt.title("RX Similarity: " + str(round(w[1],4)))
+        plt.title("RX Distance: " + str(round(w[1],4)))
         fig.tight_layout()
         export_pdf.savefig()
         plt.close()
